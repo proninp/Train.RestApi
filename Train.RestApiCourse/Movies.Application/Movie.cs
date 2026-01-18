@@ -16,11 +16,8 @@ public sealed partial class Movie
     
     private string GenerateSlug()
     {
-        var sluggedTitle = SlugRegex().Replace(Title, string.Empty)
+        var sluggedTitle = Regex.Replace(Title, "[^0-9A-Za-z _-]", string.Empty)
             .ToLower().Replace(" ", "-");
         return $"{sluggedTitle}-{YearOfRelease}";
     }
-
-    [GeneratedRegex("[^0-9A-Za-z _-]", RegexOptions.NonBacktracking, 5)]
-    private static partial Regex SlugRegex();
 }
