@@ -113,7 +113,7 @@ public sealed class MovieRepository : IMovieRepository
         {
             orderClause = $"""
                            , m.{options.SortField}
-                           order by m.{options.SortField} {(options.SortOrder == SortOrder.Ascending ? "asc" : "desc")}";"
+                           order by m.{options.SortField} {(options.SortOrder == SortOrder.Ascending ? "asc" : "desc")};
                            """;
         }
         
