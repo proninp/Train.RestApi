@@ -116,23 +116,32 @@ public sealed class MovieRepository : IMovieRepository
                            order by m.{options.SortField} {(options.SortOrder == SortOrder.Ascending ? "asc" : "desc")};
                            """;
         }
-        
+
         var result = await connection.QueryAsync(
             new CommandDefinition($"""
-                                  select m.*, 
-                                         string_agg(distinct g.name, ',') as genres , 
-                                         round(avg(r.rating), 1) as rating, 
-                                         myr.rating as userrating
-                                  from movies m 
-                                  left join genres g on m.id = g.movieid
-                                  left join ratings r on m.id = r.movieid
-                                  left join ratings myr on m.id = myr.movieid
-                                      and myr.userid = @userId
-                                  where (@title is null or m.title like ('%' || @title || '%'))
-                                  and (@yearOfRelease is null or m.yearOfRelease = @yearOfRelease)
-                                  group by id, userrating {orderClause}
-                                  """,
-                new { userId = options.UserId, title = options.Title, yearOfRelease = options.YearOfRelease },
+                                   select m.*, 
+                                          string_agg(distinct g.name, ',') as genres , 
+                                          round(avg(r.rating), 1) as rating, 
+                                          myr.rating as userrating
+                                   from movies m 
+                                   left join genres g on m.id = g.movieid
+                                   left join ratings r on m.id = r.movieid
+                                   left join ratings myr on m.id = myr.movieid
+                                       and myr.userid = @userId
+                                   where (@title is null or m.title like ('%' || @title || '%'))
+                                   and (@yearOfRelease is null or m.yearOfRelease = @yearOfRelease)
+                                   group by id, userrating {orderClause}
+                                   limit @pageSize
+                                   offset @pageOffset
+                                   """,
+                new
+                {
+                    userId = options.UserId,
+                    title = options.Title,
+                    yearOfRelease = options.YearOfRelease,
+                    pageSize = options.PageSize,
+                    pageOffset = options.PageSize * (options.Page - 1)
+                },
                 cancellationToken: token));
 
         return result.Select(x => new Movie
@@ -201,5 +210,19 @@ public sealed class MovieRepository : IMovieRepository
             new CommandDefinition("""
                                   select count(1) from movies where id = @id
                                   """, new { id }, cancellationToken: token));
+    }
+
+    public async Task<int> GetCountAsync(string? title, int? yearOfRelease, CancellationToken token = default)
+    {
+        using var connection = await _dbConnectionFactory.CreateConnectionAsync(token);
+        return await connection.QuerySingleAsync<int>(
+            new CommandDefinition("""
+                                  select count(m.id)
+                                  from movies m
+                                  where (@title is null or m.title like ('%' || @title || '%'))
+                                  and (@yearOfRelease is null or m.yearOfRelease = @yearOfRelease)
+                                  """,
+                new { title, yearOfRelease }, cancellationToken: token
+            ));
     }
 }

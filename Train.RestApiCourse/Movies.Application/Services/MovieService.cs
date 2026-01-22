@@ -1,7 +1,6 @@
 ﻿using FluentValidation;
 using Movies.Application.Models;
 using Movies.Application.Repositories;
-using Movies.Application.Validators;
 
 namespace Movies.Application.Services;
 
@@ -67,8 +66,13 @@ public sealed class MovieService : IMovieService
         return movie;
     }
 
-    public async Task<bool> DeleteByIdAsync(Guid id, CancellationToken token = default)
+    public Task<bool> DeleteByIdAsync(Guid id, CancellationToken token = default)
     {
-        return await _movieRepository.DeleteByIdAsync(id, token);
+        return _movieRepository.DeleteByIdAsync(id, token);
+    }
+
+    public Task<int> GetCountAsync(string? title, int? yearOfRelease, CancellationToken token = default)
+    {
+        return _movieRepository.GetCountAsync(title, yearOfRelease, token);
     }
 }
