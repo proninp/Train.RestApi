@@ -1,7 +1,7 @@
 using System.Text;
+using Asp.Versioning;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
-using Movies.Api;
 using Movies.Api.Auth;
 using Movies.Api.Mapping;
 using Movies.Application;
@@ -42,6 +42,14 @@ builder.Services.AddAuthorization(x =>
             c.User.HasClaim(m => 
                 m is { Type: AuthConstants.TrustedMemberClaimName, Value: "true" })));
 });
+
+builder.Services.AddApiVersioning(o =>
+{
+    o.DefaultApiVersion = new ApiVersion(1.0);
+    o.AssumeDefaultVersionWhenUnspecified = true;
+    o.ReportApiVersions = true;
+    o.ApiVersionReader = new MediaTypeApiVersionReader("api-version");
+}).AddMvc();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
