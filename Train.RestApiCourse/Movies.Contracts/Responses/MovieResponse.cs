@@ -1,6 +1,6 @@
 ﻿namespace Movies.Contracts.Responses;
 
-public sealed class MovieResponse
+public sealed class MovieResponse : HalResponse
 {
     public required Guid Id { get; init; }
     

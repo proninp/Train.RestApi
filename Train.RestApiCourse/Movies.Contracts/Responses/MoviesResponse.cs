@@ -1,6 +1,6 @@
 ﻿namespace Movies.Contracts.Responses;
 
-public sealed class MoviesResponse
+public sealed class MoviesResponse : PagedResponse<MovieResponse>
 {
-    public required IEnumerable<MovieResponse> Items { get; init; } = [];
+    
 }

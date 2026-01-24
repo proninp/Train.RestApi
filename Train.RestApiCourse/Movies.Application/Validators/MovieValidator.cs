@@ -6,8 +6,6 @@ namespace Movies.Application.Validators;
 
 public sealed class MovieValidator : AbstractValidator<Movie>
 {
-    private const int FirstMovieReleaseYear = 1888;
-
     private readonly IMovieRepository _movieRepository;
 
     public MovieValidator(IMovieRepository movieRepository)
@@ -25,7 +23,7 @@ public sealed class MovieValidator : AbstractValidator<Movie>
 
         RuleFor(m => m.YearOfRelease)
             .LessThanOrEqualTo(DateTime.UtcNow.Year)
-            .GreaterThanOrEqualTo(FirstMovieReleaseYear);
+            .GreaterThanOrEqualTo(ValidationConstants.FirstMovieReleaseYear);
 
         RuleFor(m => m.Slug)
             .MustAsync(ValidateSlug)
