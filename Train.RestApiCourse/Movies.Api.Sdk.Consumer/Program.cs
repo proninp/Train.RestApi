@@ -22,6 +22,22 @@ var provider = services.BuildServiceProvider();
 
 var moviesApi = provider.GetRequiredService<IMoviesApi>();
 
+var newMovie = await moviesApi.CreateMovieAsync(new CreateMovieRequest
+{
+    Title = "Spiderman 2",
+    YearOfRelease = 2004,
+    Genres = new []{ "Action"}
+});
+
+await moviesApi.UpdateMovieAsync(newMovie.Id, new UpdateMovieRequest()
+{
+    Title = "Spiderman 2",
+    YearOfRelease = 2004,
+    Genres = new []{ "Action", "Adventure"}
+});
+
+await moviesApi.DeleteMovieAsync(newMovie.Id);
+
 var getAllRequest = new GetAllMoviesRequest
 {
     SortBy = null,
