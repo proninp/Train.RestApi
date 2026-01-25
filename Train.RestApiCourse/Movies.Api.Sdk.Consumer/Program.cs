@@ -1,13 +1,22 @@
 ﻿using System.Text.Json;
 using Microsoft.Extensions.DependencyInjection;
 using Movies.Api.Sdk;
+using Movies.Api.Sdk.Consumer;
 using Movies.Contracts.Requests;
 using Refit;
 
 var services = new ServiceCollection();
 
-services.AddRefitClient<IMoviesApi>()
-    .ConfigureHttpClient(c => c.BaseAddress = new Uri("https://localhost:5001"));
+services
+    .AddHttpClient()
+    .AddSingleton<AuthTokenProvider>()
+    .AddRefitClient<IMoviesApi>(s => new RefitSettings
+    {
+        AuthorizationHeaderValueGetter =
+            async (_, ct) => await s.GetRequiredService<AuthTokenProvider>().GetTokenAsync(ct)
+    })
+    .ConfigureHttpClient(x =>
+        x.BaseAddress = new Uri("https://localhost:5001"));
 
 var provider = services.BuildServiceProvider();
 
