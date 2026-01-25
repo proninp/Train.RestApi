@@ -10,4 +10,9 @@
     <ItemGroup>
       <ProjectReference Include="..\Movies.Api.Sdk\Movies.Api.Sdk.csproj" />
     </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.2" />
+      <PackageReference Include="Refit.HttpClientFactory" Version="9.0.2" />
+    </ItemGroup>
 </Project>
